@@ -48,7 +48,7 @@ func _ready() -> void:
 	var uh := UI.hbox(8)
 	uv.add_child(uh)
 	_url_edit = LineEdit.new()
-	_url_edit.text = String(Store.settings.get("server_url", "http://127.0.0.1:8787"))
+	_url_edit.text = String(Store.settings.get("server_url", "https://khold-levels.mayam33.workers.dev"))
 	_url_edit.custom_minimum_size = Vector2(0, 46)
 	_url_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	uh.add_child(_url_edit)
@@ -74,7 +74,7 @@ func _ready() -> void:
 func _base_url() -> String:
 	var u := _url_edit.text.strip_edges()
 	if u == "":
-		u = "http://127.0.0.1:8787"
+		u = "https://khold-levels.mayam33.workers.dev"
 	if not u.begins_with("http://") and not u.begins_with("https://"):
 		u = "http://" + u
 	return u.trim_suffix("/")

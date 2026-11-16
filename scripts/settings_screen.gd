@@ -67,11 +67,11 @@ func _ready() -> void:
 	var sv := UI.vbox(8)
 	server_card.add_child(sv)
 	sv.add_child(UI.heading("خادم المراحل", 24))
-	sv.add_child(UI.wrap_label("للتجربة على الكمبيوتر: http://127.0.0.1:8787\nعلى جوال حقيقي استخدم عنوان الكمبيوتر على نفس الشبكة، مثل http://192.168.1.10:8787", 19, UITheme.MUTED))
+	sv.add_child(UI.wrap_label("الخادم السحابي جاهز افتراضيًا.\nللتجربة محليًا استخدم http://127.0.0.1:8787 أو عنوان الكمبيوتر على شبكة Wi-Fi.", 19, UITheme.MUTED))
 	var server_row := UI.hbox(8)
 	sv.add_child(server_row)
 	var server_edit := LineEdit.new()
-	server_edit.text = String(Store.settings.get("server_url", "http://127.0.0.1:8787"))
+	server_edit.text = String(Store.settings.get("server_url", "https://khold-levels.mayam33.workers.dev"))
 	server_edit.custom_minimum_size = Vector2(0, 48)
 	server_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	server_row.add_child(server_edit)
@@ -80,7 +80,7 @@ func _ready() -> void:
 	server_save.pressed.connect(func():
 		var u := server_edit.text.strip_edges().trim_suffix("/")
 		if u == "":
-			u = "http://127.0.0.1:8787"
+			u = "https://khold-levels.mayam33.workers.dev"
 		if not u.begins_with("http://") and not u.begins_with("https://"):
 			u = "http://" + u
 		Store.set_setting("server_url", u)

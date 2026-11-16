@@ -65,7 +65,12 @@ def free_port() -> int:
 
 def request(base: str, method: str, path: str, body: dict | None = None):
     data = None
-    headers = {"Accept": "application/json"}
+    # Cloudflare blocks generic Python user agents; use the same family of
+    # user agent that Godot's HTTPRequest sends.
+    headers = {
+        "Accept": "application/json",
+        "User-Agent": "GodotEngine/4.7.2 (HTTPRequest; Khold test)",
+    }
     if body is not None:
         data = json.dumps(body, ensure_ascii=False).encode("utf-8")
         headers["Content-Type"] = "application/json"
@@ -78,11 +83,18 @@ def request(base: str, method: str, path: str, body: dict | None = None):
         except json.JSONDecodeError:
             return {"text": raw}
 
-    try:
-        with urllib.request.urlopen(req, timeout=10) as res:
-            return res.status, parse(res.read().decode("utf-8"))
-    except urllib.error.HTTPError as exc:
-        return exc.code, parse(exc.read().decode("utf-8"))
+    last_error: Exception | None = None
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=15) as res:
+                return res.status, parse(res.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            return exc.code, parse(exc.read().decode("utf-8"))
+        except (TimeoutError, urllib.error.URLError) as exc:
+            last_error = exc
+            if attempt < 2:
+                time.sleep(0.4)
+    raise last_error  # type: ignore[misc]
 
 
 def wait_ready(base: str) -> bool:

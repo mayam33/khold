@@ -238,7 +238,11 @@ npx wrangler deploy
   اختبارات Godot كاملة على كل دفعة أو طلب سحب.
 - `.github/workflows/deploy-worker.yml`: ينشر Worker ويطبّق ترحيلات D1 عند
   الدفع إلى `main`، بعد إضافة السرّين `CLOUDFLARE_API_TOKEN` و
-  `CLOUDFLARE_ACCOUNT_ID` في إعدادات المستودع.
+  `CLOUDFLARE_ACCOUNT_ID` والمتغير `CLOUDFLARE_DEPLOY=true` في إعدادات
+  المستودع.
+
+> الخادم السحابي المنشور لهذا المشروع:
+> `https://khold-levels.mayam33.workers.dev` — وهو العنوان الافتراضي في اللعبة.
 
 ---
 

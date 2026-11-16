@@ -6,6 +6,7 @@ extends Node
 
 var failures: Array = []
 var checks := 0
+var _old_server := ""
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -37,6 +38,10 @@ func _wait(seconds: float) -> void:
 	await get_tree().create_timer(seconds).timeout
 
 func _run() -> void:
+	# The UI suite must publish to the throwaway local server, never the cloud.
+	_old_server = String(Store.settings.get("server_url", ""))
+	Store.set_setting("server_url", "http://127.0.0.1:8787")
+
 	var packed: PackedScene = load("res://scenes/main.tscn")
 	_check(packed != null, "main scene loads")
 	if packed == null:
@@ -189,6 +194,7 @@ func _run() -> void:
 	# --- Cleanup ----------------------------------------------------------
 	if saved_id != "":
 		Store.delete_user_level(saved_id)
+	Store.set_setting("server_url", _old_server)
 	Sfx.stop_all()
 	print("")
 	print("UI smoke test: %d checks, %d failures" % [checks, failures.size()])

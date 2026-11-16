@@ -12,7 +12,7 @@ const DEFAULT_SETTINGS := {
 	"sound": true,
 	"haptics": true,
 	"author": "لاعب",
-	"server_url": "http://127.0.0.1:8787",
+	"server_url": "https://khold-levels.mayam33.workers.dev",
 	"client_id": "",
 }
 

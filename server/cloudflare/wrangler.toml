@@ -8,7 +8,7 @@ workers_dev = true
 [[d1_databases]]
 binding = "DB"
 database_name = "khold-levels"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "d1fe4249-3677-403f-b2ff-e80bc774c8ca"
 migrations_dir = "migrations"
 
 [observability]

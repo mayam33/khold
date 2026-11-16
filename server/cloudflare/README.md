@@ -49,12 +49,13 @@ npx wrangler dev --local --port 8788
 
 أضف في إعدادات المستودع (`Settings → Secrets and variables → Actions`):
 
-| السر | القيمة |
-|---|---|
-| `CLOUDFLARE_API_TOKEN` | توكن من Cloudflare بصلاحيات **Workers Scripts:Edit** و **D1:Edit** |
-| `CLOUDFLARE_ACCOUNT_ID` | معرّف الحساب من لوحة Cloudflare |
+| الاسم | النوع | القيمة |
+|---|---|---|
+| `CLOUDFLARE_API_TOKEN` | Secret | توكن بصلاحيات **Workers Scripts:Edit** و **D1:Edit** |
+| `CLOUDFLARE_ACCOUNT_ID` | Secret | معرّف الحساب من لوحة Cloudflare |
+| `CLOUDFLARE_DEPLOY` | Variable | `true` |
 
-بعدها يعمل `.github/workflows/deploy-worker.yml` عند كل تعديل في
+بعد إضافة المتغير يعمل `.github/workflows/deploy-worker.yml` عند كل تعديل في
 `server/cloudflare/`، ويطبّق الترحيلات ثم ينشر Worker.
 
 لإنشاء التوكن: `My Profile → API Tokens → Create Token → Custom Token`،
