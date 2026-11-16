@@ -1,0 +1,12 @@
+.godot/
+build/
+screenshots/
+*.tmp
+server/khold.db
+server/__pycache__/
+__pycache__/
+.wrangler/
+node_modules/
+dist/
+server/cloudflare/.dev.vars
+.env

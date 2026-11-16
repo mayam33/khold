@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    name: Python level server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: API tests
+        run: python tools/test_server.py
+
+  worker:
+    name: Cloudflare Worker bundle
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server/cloudflare
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate bundle
+        run: npx --yes wrangler@4 deploy --dry-run --outdir dist
+
+  godot:
+    name: Godot tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Godot 4.7.2
+        run: |
+          curl -fsSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          chmod +x Godot_v4.7.2-stable_linux.x86_64
+          sudo mv Godot_v4.7.2-stable_linux.x86_64 /usr/local/bin/godot
+          godot --version
+      - name: Import project
+        run: godot --headless --path . --editor --quit
+      - name: Campaign solver
+        run: godot --headless --path . --script res://tools/solve.gd
+      - name: Mechanics tests
+        run: godot --headless --path . res://tools/test_mechanics.tscn
+      - name: Start level server
+        run: |
+          python server/server.py --host 127.0.0.1 --port 8787 --db /tmp/khold_ci.db > /tmp/khold_server.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8787/health > /dev/null; then
+              break
+            fi
+            sleep 0.25
+          done
+      - name: UI integration tests
+        run: godot --headless --path . res://tools/test_ui.tscn
