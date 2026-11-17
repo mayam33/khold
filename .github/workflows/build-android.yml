@@ -14,8 +14,11 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GODOT_VERSION: 4.7.2-stable
   APK_NAME: khold.apk
+  # ubuntu-latest ships the Android SDK here. Godot reads these variables on
+  # its first editor launch to auto-configure export/android/*_sdk_path.
+  ANDROID_HOME: /usr/local/lib/android/sdk
+  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
 
 jobs:
   apk:
@@ -23,6 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
       - name: Cache export templates
         id: templates
@@ -50,15 +59,26 @@ jobs:
           sudo mv /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 /usr/local/bin/godot
           godot --version
 
-      - uses: android-actions/setup-android@v3
-
       - name: Install Android SDK components
         run: |
-          sdkmanager --licenses > /dev/null 2>&1 || true
-          sdkmanager "platform-tools" "platforms;android-35" "platforms;android-36" "build-tools;35.0.0" "build-tools;36.0.0"
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$SDKMANAGER" ]; then
+            SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -name sdkmanager -type f | head -n 1)"
+          fi
+          echo "Using sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses > /dev/null 2>&1 || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "platforms;android-36" \
+            "build-tools;35.0.0" "build-tools;36.0.0"
 
-      - name: Import project
+      - name: Import project and initialize editor settings
         run: godot --headless --path . --editor --quit
+
+      - name: Verify toolchain
+        run: |
+          echo "JAVA_HOME=$JAVA_HOME"
+          java -version
+          keytool -help > /dev/null 2>&1 && echo "keytool OK"
+          ls "$ANDROID_HOME/build-tools"
 
       - name: Export APK
         run: |
