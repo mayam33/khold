@@ -56,6 +56,8 @@ jobs:
         run: godot --headless --path . --script res://tools/solve.gd
       - name: Mechanics tests
         run: godot --headless --path . res://tools/test_mechanics.tscn
+      - name: Cloud server connectivity
+        run: godot --headless --path . res://tools/test_cloud.tscn
       - name: Start level server
         run: |
           python server/server.py --host 127.0.0.1 --port 8787 --db /tmp/khold_ci.db > /tmp/khold_server.log 2>&1 &

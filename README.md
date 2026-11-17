@@ -100,6 +100,7 @@ server/server.py           خادم JSON + SQLite للتشغيل المحلي
 server/cloudflare/         خادم Cloudflare Workers + D1 + ترحيلات
 tools/solve.gd             فاحص قابلية الحل وحساب الأهداف
 tools/test_server.py       اختبار واجهة الخادم (Python أو Worker)
+tools/test_cloud.*         فحص اتصال Godot بالخادم السحابي
 tools/test_ui*.gd/tscn     اختبار واجهات شامل
 tools/test_mechanics.*     اختبارات المنطق والمحلل
 .github/workflows/         CI ونشر Cloudflare تلقائيًا
@@ -263,6 +264,9 @@ python tools/test_server.py
 
 # اختبار نسخة Cloudflare أثناء تشغيل wrangler dev
 python tools/test_server.py --base http://127.0.0.1:8788
+
+# فحص اتصال عميل Godot بالخادم السحابي المنشور
+godot --headless --path . res://tools/test_cloud.tscn
 ```
 
 > يحتاج اختبار الواجهة إلى تشغيل خادم المراحل على `127.0.0.1:8787`.

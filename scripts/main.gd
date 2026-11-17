@@ -49,6 +49,9 @@ func _add_toast() -> void:
 	layer.add_child(margin)
 	var v := VBoxContainer.new()
 	v.alignment = BoxContainer.ALIGNMENT_END
+	# This full-screen toast container sits on a high CanvasLayer. Keep it from
+	# intercepting clicks intended for the active screen underneath.
+	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.add_child(v)
 	_toast_panel = UI.panel(14, Color("30243d"))
 	_toast_panel.custom_minimum_size = Vector2(0, 0)
