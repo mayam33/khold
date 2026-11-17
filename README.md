@@ -76,6 +76,7 @@ godot --path .
 
 ```text
 project.godot              إعدادات Godot، Autoloads، اتجاه الشاشة
+export_presets.cfg         إعداد تصدير Android (ARM64)
 scenes/main.tscn           المشهد الرئيسي
 scripts/
   main.gd                  الموجه بين الشاشات + التنبيهات
@@ -277,7 +278,19 @@ godot --headless --path . res://tools/test_cloud.tscn
 
 ## التصدير إلى الجوال
 
-### أندرويد
+### بناء APK جاهز من GitHub
+
+أضفنا سير عمل `.github/workflows/build-android.yml` الذي ثبّت قوالب Godot و
+Android SDK ويصدّر APK موقّعًا بتصحيح الأخطاء (debug):
+
+1. افتح تبويب **Actions** في المستودع، ثم اختر **Build Android APK**.
+2. اضغط **Run workflow**، وانتظر اكتماله.
+3. نزّل الملف `khold-apk` من تبويب **Artifacts**، وافكّ ضغطه لتحصل على `khold.apk`.
+
+يمكن أيضًا تشغيله تلقائيًا بدفع وسم يبدأ بـ `v` مثل `v1.0.0`.
+اسم الحزمة: `com.mayam33.khold`، والاتجاه عمودي.
+
+### أندرويد (محليًا)
 
 1. نزّل **Export Templates** لنسخة Godot 4.7.2 من
    `Editor → Manage Export Templates`.
