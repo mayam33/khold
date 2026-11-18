@@ -190,12 +190,22 @@ func translate_text(source: String) -> String:
 		return source
 	if ENGLISH.has(source):
 		return String(ENGLISH[source])
+	if source.begins_with("الحركات: "):
+		return "Moves: " + source.trim_prefix("الحركات: ")
 	if source.begins_with("الحركات "):
 		return "Moves " + source.trim_prefix("الحركات ")
+	if source.begins_with("الثمار: "):
+		return "Fruit: " + source.trim_prefix("الثمار: ")
 	if source.begins_with("الثمار "):
 		return "Fruit " + source.trim_prefix("الثمار ")
+	if source.begins_with("الهدف: "):
+		var goal := source.trim_prefix("الهدف: ")
+		goal = goal.replace(" حركة", " moves")
+		return "Goal: " + goal
 	if source.begins_with("الهدف "):
 		return "Goal " + source.trim_prefix("الهدف ")
+	if source.begins_with("مرحلة: "):
+		return "Level: " + source.trim_prefix("مرحلة: ")
 	if source.begins_with("أفضل نتيجة: "):
 		return "Best: " + source.trim_prefix("أفضل نتيجة: ")
 	if source.begins_with("أفضل "):

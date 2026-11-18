@@ -54,6 +54,9 @@ const CELEBRATE := [
 
 static func frames_for(animation: String) -> Array:
 	match animation:
+		# The dig frames show the beaver gripping its shovel/trowel. Expose
+		# them under a separate name so menus can animate that pose too.
+		"shovel": return DIG
 		"walk": return WALK
 		"run": return RUN
 		"dig": return DIG

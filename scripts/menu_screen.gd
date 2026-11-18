@@ -16,14 +16,13 @@ func _ready() -> void:
 	outer.add_child(center)
 
 	var col := UI.vbox(14)
-	col.custom_minimum_size = Vector2(430, 0)
+	# Fixed column width; long labels wrap instead of stretching the menu
+	# past the 720px screen (English story text used to push it to 788px).
+	col.custom_minimum_size = Vector2(520, 0)
 	center.add_child(col)
 
-	var mascot := TextureRect.new()
-	mascot.texture = BeaverArt.PORTRAIT
-	mascot.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	mascot.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	mascot.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	# Animated beaver holding its shovel, instead of a still portrait.
+	var mascot := preload("res://scripts/animated_beaver.gd").new()
 	mascot.custom_minimum_size = Vector2(230, 210)
 	mascot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(mascot)
@@ -33,7 +32,9 @@ func _ready() -> void:
 	title.add_theme_constant_override("shadow_offset_y", 4)
 	col.add_child(title)
 	col.add_child(UI.label("مغامرة تحت الأرض", 27, UITheme.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
-	col.add_child(UI.label("ملّ القندس من الحفر قرب النهر، فانطلق ليستكشف ما تحت الأرض.", 21, UITheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+	var story := UI.wrap_label("ملّ القندس من الحفر قرب النهر، فانطلق ليستكشف ما تحت الأرض.", 21, UITheme.MUTED)
+	story.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(story)
 	col.add_child(UI.spacer_h(14))
 
 	var play := UI.button("العب", 72, true)

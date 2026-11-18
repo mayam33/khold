@@ -36,8 +36,18 @@ func _draw() -> void:
 		var c := UITheme.BG.lerp(UITheme.BG_2, smoothstep(0.0, 1.0, k))
 		draw_rect(Rect2(0.0, floorf(r.y * float(i) / float(bands)), r.x, ceilf(r.y / float(bands)) + 1.0), c)
 
+	# Gentle soil strata: uneven horizontal bands with a lit top edge.
+	for i in 9:
+		var k := float(i) / 9.0
+		var sy := floorf(r.y * k + sin(k * 9.0) * 10.0)
+		draw_rect(Rect2(0.0, sy, r.x, maxf(2.0, r.y / 260.0)), Color(0.52, 0.36, 0.24, 0.10))
+		draw_rect(Rect2(0.0, sy + 2.0, r.x, maxf(1.0, r.y / 500.0)), Color(0.08, 0.05, 0.06, 0.16))
+
 	# Soft warm glow from above.
-	draw_circle(Vector2(r.x * 0.5, -r.y * 0.04), r.x * 0.9, Color(0.94, 0.66, 0.24, 0.045))
+	draw_circle(Vector2(r.x * 0.5, -r.y * 0.04), r.x * 0.9, Color(0.94, 0.66, 0.24, 0.055))
+	# Corner vignette keeps attention on the centre of the screen.
+	draw_rect(Rect2(0.0, 0.0, r.x, r.y * 0.10), Color(0.0, 0.0, 0.0, 0.10))
+	draw_rect(Rect2(0.0, r.y * 0.90, r.x, r.y * 0.10), Color(0.0, 0.0, 0.0, 0.14))
 
 	# Deterministic dirt speckles for texture.
 	var step := 52

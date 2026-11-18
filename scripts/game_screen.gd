@@ -346,6 +346,9 @@ func _show_modal(kind: String, title: String, content: Control, buttons: Array) 
 	for b in buttons:
 		row.add_child(b)
 	v.add_child(row)
+	# Dialogs are created after the screen was translated, so translate the
+	# freshly built overlay too. English must work while paused or on results.
+	I18n.translate_tree(overlay)
 
 func _close_modal() -> void:
 	_overlay_open = false

@@ -18,7 +18,9 @@ The supplied beaver sprite sheet provides the character and its animations.
 - **قسم مراحل الإنترنت**: نشر، تصفح، تنزيل، لعب، تقييم، وإبلاغ.
 - **يعمل دون اتصال**: المراحل المنزّلة والمحلية تُحفظ على الجهاز.
 - **English and Arabic interface**, with layout direction adjusted for each language.
-- **Beaver animation**: idle, walk, dig, fall, hurt, die, and celebrate states.
+- **Beaver animation**: idle, walk, dig, fall, hurt, die, celebrate, and an
+  animated shovel-holding mascot on the menu. Cave art uses shaded dirt strata,
+  faceted rocks, lit pickups, and a layered soil backdrop.
 - **Display options**: scale the game interface and show or hide the touch arrows.
 - **خادم مراحل صغير** بلا اعتماديات خارجية: Python + SQLite، أو نسخة سحابية
   جاهزة على **Cloudflare Workers + D1**.

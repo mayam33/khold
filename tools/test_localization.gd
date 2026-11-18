@@ -34,6 +34,14 @@ func _button_with(node: Node, text: String) -> Button:
 			return b
 	return null
 
+func _texts(node: Node, out: Array) -> void:
+	if node is Label:
+		out.append(String((node as Label).text).strip_edges())
+	elif node is Button:
+		out.append(String((node as Button).text).strip_edges())
+	for child in node.get_children():
+		_texts(child, out)
+
 func _run() -> void:
 	_old_language = String(Store.settings.get("language", "en"))
 	I18n.set_language("en")
@@ -50,13 +58,32 @@ func _run() -> void:
 	_check(_button_with(main, "Level Editor") != null, "menu shows the English editor button")
 	_check(_button_with(main, "Community Levels") != null, "menu shows the English online button")
 	_check(_button_with(main, "Settings") != null, "menu shows the English settings button")
+	# A long English story string used to push the menu to 788px and skew it.
+	_check(main.current.get_combined_minimum_size().x <= 720.0, "English menu fits the 720px design width")
 
 	# Beaver art must resolve to real textures.
 	_check(BeaverArt.PORTRAIT != null, "beaver portrait loads")
 	_check(BeaverArt.frames_for("idle").size() == 4, "idle animation has four frames")
 	_check(BeaverArt.frames_for("dig").size() == 4, "dig animation has four frames")
+	_check(BeaverArt.frames_for("shovel").size() == 4, "shovel animation has four frames")
 	_check(BeaverArt.frames_for("die").size() == 3, "die animation has three frames")
 	_check(BeaverArt.texture_for("walk", 0) != null, "walk frame resolves")
+
+	# Pause dialogs are created after I18n.translate_tree(screen), so the
+	# freshly built overlay must be translated separately.
+	var game := load("res://scripts/game_screen.gd").new() as Control
+	game.test_mode = true
+	add_child(game)
+	await get_tree().process_frame
+	game._open_pause()
+	await get_tree().process_frame
+	var pause_texts: Array = []
+	_texts(game.overlay, pause_texts)
+	_check(pause_texts.has("Paused"), "pause dialog title is English while paused")
+	_check(pause_texts.has("Resume"), "pause dialog resume button is English")
+	_check(pause_texts.has("Restart"), "pause dialog restart button is English")
+	_check(pause_texts.has("Exit"), "pause dialog exit button is English")
+	game.queue_free()
 
 	# Switch to Arabic: layout and labels must flip back.
 	I18n.set_language("ar")
