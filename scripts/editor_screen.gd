@@ -175,14 +175,14 @@ func _select_tool(id: int) -> void:
 		LevelData.T_EXIT: "مخرج",
 		TOOL_PLAYER: "لاعب",
 	}
-	_tool_hint.text = "الأداة: %s" % String(names.get(id, ""))
+	I18n.set_node_text(_tool_hint, &"text", "الأداة: %s" % String(names.get(id, "")))
 	Sfx.play("click", 1.2)
 
 func _update_labels() -> void:
 	var fruits := _count_fruits()
-	hint_label.text = "ثمار: %d • المقاس %d×%d" % [fruits, w, h]
+	I18n.set_node_text(hint_label, &"text", "ثمار: %d • المقاس %d×%d" % [fruits, w, h])
 	if _tool_hint.text == "":
-		_tool_hint.text = "الأداة: تراب"
+		I18n.set_node_text(_tool_hint, &"text", "الأداة: تراب")
 
 func _count_fruits() -> int:
 	var n := 0
@@ -275,6 +275,7 @@ func _back() -> void:
 	dialog.ok_button_text = "خروج"
 	dialog.theme = UITheme.shared()
 	add_child(dialog)
+	I18n.translate_tree(dialog)
 	dialog.confirmed.connect(func(): back_requested.emit())
 	dialog.canceled.connect(dialog.queue_free)
 	dialog.popup_centered(Vector2i(520, 240))
@@ -286,6 +287,7 @@ func _confirm_reset() -> void:
 	dialog.ok_button_text = "امسح"
 	dialog.theme = UITheme.shared()
 	add_child(dialog)
+	I18n.translate_tree(dialog)
 	dialog.confirmed.connect(func():
 		var rows := LevelData.default_rows()
 		var parsed := LevelData.cells_from_rows(rows, 12, 16)

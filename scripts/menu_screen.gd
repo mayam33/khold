@@ -19,17 +19,21 @@ func _ready() -> void:
 	col.custom_minimum_size = Vector2(430, 0)
 	center.add_child(col)
 
-	var mascot := preload("res://scripts/mascot.gd").new()
-	mascot.custom_minimum_size = Vector2(230, 200)
+	var mascot := TextureRect.new()
+	mascot.texture = BeaverArt.PORTRAIT
+	mascot.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	mascot.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	mascot.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	mascot.custom_minimum_size = Vector2(230, 210)
 	mascot.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	col.add_child(mascot)
 
-	var title := UI.heading("خُلد", 66, UITheme.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
+	var title := UI.heading("Beaver Explorer", 52, UITheme.TEXT, HORIZONTAL_ALIGNMENT_CENTER)
 	title.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.55))
 	title.add_theme_constant_override("shadow_offset_y", 4)
 	col.add_child(title)
-	col.add_child(UI.label("مغامرة الحفر", 27, UITheme.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
-	col.add_child(UI.label("احفر، اجمع الثمار، واحذر الصخور.", 21, UITheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+	col.add_child(UI.label("مغامرة تحت الأرض", 27, UITheme.ACCENT, HORIZONTAL_ALIGNMENT_CENTER))
+	col.add_child(UI.label("ملّ القندس من الحفر قرب النهر، فانطلق ليستكشف ما تحت الأرض.", 21, UITheme.MUTED, HORIZONTAL_ALIGNMENT_CENTER))
 	col.add_child(UI.spacer_h(14))
 
 	var play := UI.button("العب", 72, true)
@@ -51,4 +55,4 @@ func _ready() -> void:
 
 	col.add_child(UI.spacer_h(18))
 	col.add_child(UI.label("مفتوح المصدر • رخصة MIT • Godot 4", 18, Color("8d7f95"), HORIZONTAL_ALIGNMENT_CENTER))
-	col.add_child(UI.label("الإصدار 1.0.0", 17, Color("6f6378"), HORIZONTAL_ALIGNMENT_CENTER))
+	col.add_child(UI.label("الإصدار 1.1.0", 17, Color("6f6378"), HORIZONTAL_ALIGNMENT_CENTER))

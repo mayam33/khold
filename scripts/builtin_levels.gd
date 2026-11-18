@@ -6,7 +6,7 @@ extends RefCounted
 static func all() -> Array:
 	return [
 		{
-			"id": "b01", "name": "أول حفرة", "author": "خُلد", "par": 30, "source": "builtin",
+			"id": "b01", "name": "أول حفرة", "author": "Beaver Explorer", "par": 30, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.........S",
@@ -27,7 +27,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b02", "name": "صخور في الطريق", "author": "خُلد", "par": 25, "source": "builtin",
+			"id": "b02", "name": "صخور في الطريق", "author": "Beaver Explorer", "par": 25, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.........S",
@@ -48,7 +48,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b03", "name": "ممرات ضيقة", "author": "خُلد", "par": 44, "source": "builtin",
+			"id": "b03", "name": "ممرات ضيقة", "author": "Beaver Explorer", "par": 44, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP....S....S",
@@ -69,7 +69,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b04", "name": "تحت الصخور", "author": "خُلد", "par": 44, "source": "builtin",
+			"id": "b04", "name": "تحت الصخور", "author": "Beaver Explorer", "par": 44, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.........S",
@@ -90,7 +90,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b05", "name": "الغرفة المغلقة", "author": "خُلد", "par": 42, "source": "builtin",
+			"id": "b05", "name": "الغرفة المغلقة", "author": "Beaver Explorer", "par": 42, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.........S",
@@ -111,7 +111,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b06", "name": "الجسر", "author": "خُلد", "par": 34, "source": "builtin",
+			"id": "b06", "name": "الجسر", "author": "Beaver Explorer", "par": 34, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.........S",
@@ -132,7 +132,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b07", "name": "الحلقة الحجرية", "author": "خُلد", "par": 30, "source": "builtin",
+			"id": "b07", "name": "الحلقة الحجرية", "author": "Beaver Explorer", "par": 30, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.........S",
@@ -153,7 +153,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b08", "name": "المتاهة", "author": "خُلد", "par": 34, "source": "builtin",
+			"id": "b08", "name": "المتاهة", "author": "Beaver Explorer", "par": 34, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP..S......S",
@@ -174,7 +174,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b09", "name": "الصخور المتساقطة", "author": "خُلد", "par": 24, "source": "builtin",
+			"id": "b09", "name": "الصخور المتساقطة", "author": "Beaver Explorer", "par": 24, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP.R.R.R.R.S",
@@ -195,7 +195,7 @@ static func all() -> Array:
 			],
 		},
 		{
-			"id": "b10", "name": "القبو", "author": "خُلد", "par": 56, "source": "builtin",
+			"id": "b10", "name": "القبو", "author": "Beaver Explorer", "par": 56, "source": "builtin",
 			"rows": [
 				"SSSSSSSSSSSS",
 				"SP....R....S",

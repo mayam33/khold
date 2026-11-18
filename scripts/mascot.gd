@@ -22,8 +22,8 @@ func _draw() -> void:
 	draw_rect(Rect2(w * 0.16, h * 0.74, w * 0.68, h * 0.16), Color("4a3020"))
 	draw_rect(Rect2(w * 0.10, h * 0.80, w * 0.80, h * 0.12), Color("5c3b2b"))
 	draw_rect(Rect2(w * 0.22, h * 0.70, w * 0.56, h * 0.08), Color("6c4a2f"))
-	# Mole
-	PixelArt.draw_mole(self, Rect2(w * 0.20, h * 0.08, w * 0.60, h * 0.66), _t)
+	# Beaver Explorer
+	draw_texture_rect(BeaverArt.PORTRAIT, Rect2(w * 0.20, h * 0.02, w * 0.62, h * 0.72), false)
 	# Fruit companion
 	var bob := sin(_t * 2.2 + 1.0) * 4.0
 	var fr := Rect2(w * 0.76, h * 0.62 + bob, w * 0.18, w * 0.18)

@@ -1,10 +1,10 @@
-# خُلد — Khold
+# Beaver Explorer
 
-لعبة حفر بكسل ثنائية الأبعاد للجوال، مفتوحة المصدر، مبنية بـ **Godot 4.7**.
-احفر التراب، اجمع كل الثمار، افتح المخرج، واحذر الصخور المتساقطة.
+An open-source 2D digging puzzle for mobile, built with **Godot 4.7**.
+English is the default language; Arabic is available in Settings.
 
-اللعبة أصلية بالكامل: كل الرسومات تُرسم بالكود، وكل المؤثرات الصوتية تُولّد داخل
-المشروع. لا توجد أصول فنية أو صوتية منسوخة من أي لعبة أخرى.
+The beaver grew bored of digging beside rivers and set off to explore underground.
+The supplied beaver sprite sheet provides the character and its animations.
 
 ---
 
@@ -17,7 +17,9 @@
 - **محرر مراحل داخل اللعبة**: سبع أدوات رسم، اختبار فوري، حفظ محلي.
 - **قسم مراحل الإنترنت**: نشر، تصفح، تنزيل، لعب، تقييم، وإبلاغ.
 - **يعمل دون اتصال**: المراحل المنزّلة والمحلية تُحفظ على الجهاز.
-- **واجهة عربية RTL** بخط Almarai المضمّن (رخصة SIL OFL).
+- **English and Arabic interface**, with layout direction adjusted for each language.
+- **Beaver animation**: idle, walk, dig, fall, hurt, die, and celebrate states.
+- **Display options**: scale the game interface and show or hide the touch arrows.
 - **خادم مراحل صغير** بلا اعتماديات خارجية: Python + SQLite، أو نسخة سحابية
   جاهزة على **Cloudflare Workers + D1**.
 
@@ -54,7 +56,7 @@ godot --path .
 
 | العنصر | المعنى |
 | --- | --- |
-| الخلد | اللاعب |
+| القندس | اللاعب |
 | التراب البني | قابل للحفر |
 | الصخر | يُدفع أفقيًا فقط، ويسقط عند وجود فراغ تحته |
 | الفولاذ | جدار لا يُكسر |
@@ -62,7 +64,8 @@ godot --path .
 | المخرج | يُفتح بعد جمع آخر ثمرة |
 
 - **الهدف**: جمع كل الثمار ثم الوصول إلى المخرج بأقل عدد حركات.
-- **الموت**: إذا سقط صخر على الخلد. استخدم «تراجع» أو «إعادة».
+- **الصعود**: لا يستطيع القندس الصعود إلى خانة فارغة فوقه.
+- **الصخور**: السقوط خطوة واحدة يوقف الصخرة فوق القندس ويسد الطريق؛ السقوط خطوتين أو أكثر يقتله.
 - **النجوم**: 3 نجوم عند الوصول ضمن 115% من الهدف، ونجمتان ضمن 155%، وإلا نجمة.
 - **التحكم**:
   - اسحب فوق لوحة اللعب في اتجاه الحركة.
@@ -80,6 +83,8 @@ export_presets.cfg         إعداد تصدير Android (ARM64)
 scenes/main.tscn           المشهد الرئيسي
 scripts/
   main.gd                  الموجه بين الشاشات + التنبيهات
+  i18n.gd                  الإنجليزية الافتراضية وخيار العربية
+  beaver_art.gd            صور القندس وحركاته
   menu_screen.gd           القائمة الرئيسية
   level_select.gd          مراحل الحملة والمراحل المحلية
   game_screen.gd           واجهة اللعب، الأسهم، النوافذ
@@ -96,7 +101,7 @@ scripts/
   background.gd            خلفية متحركة
   dpad.gd                  لوحة الأسهم
   star_rating.gd           ودجة النجوم
-  mascot.gd                شخصية القائمة
+  mascot.gd                رسم شخصية القندس للقائمة
 server/server.py           خادم JSON + SQLite للتشغيل المحلي
 server/cloudflare/         خادم Cloudflare Workers + D1 + ترحيلات
 tools/solve.gd             فاحص قابلية الحل وحساب الأهداف
@@ -105,6 +110,7 @@ tools/test_cloud.*         فحص اتصال Godot بالخادم السحابي
 tools/test_ui*.gd/tscn     اختبار واجهات شامل
 tools/test_mechanics.*     اختبارات المنطق والمحلل
 .github/workflows/         CI ونشر Cloudflare تلقائيًا
+assets/characters/beaver/  صور وحركات القندس المستخرجة من الصورة المرجعية
 assets/fonts/              خط Almarai + رخصة OFL
 ```
 
@@ -166,7 +172,7 @@ python server/server.py --host 0.0.0.0 --port 8787
 سيطبع عنوان الشبكة المحلية، مثل:
 
 ```text
-Khold level server listening on http://0.0.0.0:8787
+Beaver Explorer level server listening on http://0.0.0.0:8787
 LAN URL for phones: http://192.168.1.10:8787
 Database: ...\server\khold.db
 ```
@@ -260,6 +266,9 @@ godot --headless --path . res://tools/test_mechanics.tscn
 # اختبار الواجهات: القائمة، اللعب، التراجع، المحرر، الإنترنت
 godot --headless --path . res://tools/test_ui.tscn
 
+# اختبار اللغة الافتراضية الإنجليزية والعربية وصور القندس
+godot --headless --path . res://tools/test_localization.tscn
+
 # اختبار واجهة الخادم (يشغّل خادم Python مؤقتًا تلقائيًا)
 python tools/test_server.py
 
@@ -271,8 +280,8 @@ godot --headless --path . res://tools/test_cloud.tscn
 ```
 
 > يحتاج اختبار الواجهة إلى تشغيل خادم المراحل على `127.0.0.1:8787`.
-> النتيجة الحالية: **35 فحصًا ناجحًا** في كل من اختباري المنطق والواجهة،
-> **25 فحصًا** لواجهة الخادم، و**10 مراحل قابلة للحل**.
+> النتيجة الحالية: **44 فحصًا ناجحًا** لمنطق اللعب، **35 فحصًا** للواجهة،
+> **18 فحصًا** للغة والرسوم، **25 فحصًا** لواجهة الخادم، و**10 مراحل قابلة للحل**.
 
 ---
 
@@ -285,10 +294,10 @@ Android SDK ويصدّر APK موقّعًا بتصحيح الأخطاء (debug):
 
 1. افتح تبويب **Actions** في المستودع، ثم اختر **Build Android APK**.
 2. اضغط **Run workflow**، وانتظر اكتماله.
-3. نزّل الملف `khold-apk` من تبويب **Artifacts**، وافكّ ضغطه لتحصل على `khold.apk`.
+3. نزّل الملف `beaver-explorer-apk` من تبويب **Artifacts**، وافكّ ضغطه لتحصل على `BeaverExplorer.apk`.
 
-يمكن أيضًا تشغيله تلقائيًا بدفع وسم يبدأ بـ `v` مثل `v1.0.0`.
-اسم الحزمة: `com.mayam33.khold`، والاتجاه عمودي.
+يمكن أيضًا تشغيله تلقائيًا بدفع وسم يبدأ بـ `v` مثل `v1.1.0`.
+اسم الحزمة: `com.mayam33.beaverexplorer`، والاتجاه عمودي.
 
 ### أندرويد (محليًا)
 
@@ -298,11 +307,11 @@ Android SDK ويصدّر APK موقّعًا بتصحيح الأخطاء (debug):
 3. أنشئ مفتاح توقيع:
 
    ```powershell
-   keytool -genkey -v -keystore khold.keystore -alias khold `
+   keytool -genkey -v -keystore beaverexplorer.keystore -alias beaverexplorer `
      -keyalg RSA -keysize 2048 -validity 10000
    ```
 
-4. من `Project → Export` أضف إعداد **Android**، اختر الحزمة `com.example.khold`،
+4. من `Project → Export` أضف إعداد **Android**، اختر الحزمة `com.example.beaverexplorer`،
    وحدد الـ keystore.
 5. صدّر APK أو AAB. الاتجاه مضبوط مسبقًا على الوضع العمودي.
 
@@ -323,7 +332,8 @@ Android SDK ويصدّر APK موقّعًا بتصحيح الأخطاء (debug):
 ## الترخيص والحقوق
 
 - **كود المشروع**: رخصة MIT — راجع `LICENSE`.
-- **الرسومات**: إجرائية بالكامل داخل `scripts/pixel_art.gd`، وتتبع رخصة المشروع.
+- **رسوم الشخصية**: مقتطعة من ورقة القندس المقدمة للمشروع؛ المعالجة موثقة في `tools/extract_beaver_sprites.ps1`.
+- **رسوم البيئة**: إجرائية داخل `scripts/pixel_art.gd`، وتتبع رخصة المشروع.
 - **الأصوات**: مُولّدة رياضيًا داخل `scripts/sfx.gd`، ولا تحتوي على تسجيلات خارجية.
 - **الخط**: Almarai، رخصة SIL Open Font License 1.1 — راجع
   `assets/fonts/OFL.txt`.
@@ -342,4 +352,4 @@ Android SDK ويصدّر APK موقّعًا بتصحيح الأخطاء (debug):
 - محرر بأحجام مراحل اختيارية (7×7 حتى 24×32).
 - تحسينات إضافية لأداء الرسم على الأجهزة الضعيفة.
 
-صُنع بـ Godot 4. خُلد — احفر، اجمع، واصعد.
+Made with Godot 4. Beaver Explorer — dig, collect, and explore.

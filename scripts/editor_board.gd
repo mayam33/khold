@@ -20,6 +20,7 @@ var _last := Vector2i(-1, -1)
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	focus_mode = Control.FOCUS_NONE
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	resized.connect(_layout)
 	_layout()
 
@@ -53,8 +54,14 @@ func _draw() -> void:
 			var rect := Rect2(float(x) * _cell, float(y) * _cell, _cell, _cell)
 			PixelArt.draw_tile(self, int(cells[y][x]), rect, Vector2i(x, y), 0.0, true)
 
-	var prect := Rect2(float(player.x) * _cell, float(player.y) * _cell, _cell, _cell)
-	PixelArt.draw_mole(self, prect, 0.0, false)
+	var sprite_size := Vector2(_cell * 1.18, _cell * 1.48)
+	var prect := Rect2(
+		(float(player.x) + 0.5) * _cell - sprite_size.x * 0.5,
+		(float(player.y) + 1.0) * _cell - sprite_size.y * 0.92,
+		sprite_size.x,
+		sprite_size.y
+	)
+	draw_texture_rect(BeaverArt.texture_for("idle", 0), prect, false)
 
 	if _cell >= 22.0:
 		var line_color := Color(1.0, 1.0, 1.0, 0.055)

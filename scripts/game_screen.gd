@@ -92,6 +92,10 @@ func _ready() -> void:
 	dpad = DPad.new()
 	dpad.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	bottom.add_child(dpad)
+	if not bool(Store.settings.get("show_arrows", true)):
+		dpad.visible = false
+		dpad.custom_minimum_size = Vector2.ZERO
+		bottom.custom_minimum_size.y = 104
 	var restart_btn := UI.ghost_button("إعادة", 82)
 	restart_btn.custom_minimum_size = Vector2(104, 82)
 	restart_btn.add_theme_font_size_override("font_size", 22)

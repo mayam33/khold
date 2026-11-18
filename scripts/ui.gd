@@ -93,7 +93,7 @@ static func chip(text: String, color := UITheme.TEXT) -> PanelContainer:
 static func set_chip(p: PanelContainer, text: String) -> void:
 	var l := p.get_node_or_null("Value") as Label
 	if l:
-		l.text = text
+		I18n.set_node_text(l, &"text", text)
 
 static func section_title(text: String) -> Label:
 	return heading(text, 28, UITheme.ACCENT)

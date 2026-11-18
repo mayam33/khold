@@ -89,18 +89,32 @@ func _run() -> void:
 	_check(b3.px == 1 and b3.py == 1, "undo restores the player")
 	b3.queue_free()
 
-	# --- Falling rock kills the player ------------------------------------
-	var death_level := _level(["SSSSSSS", "SSR SSS", "SP.FESS", "SSSSSSS", "SSSSSSS", "SSSSSSS", "SSSSSSS"])
+	# --- Rock lands on the player: one cell blocks, two cells kill ---------
+	# A rock one cell above the beaver stops on its head and seals the tunnel.
+	var block_level := _level(["SSSSSSS", "SSR SSS", "SP.FESS", "SSSSSSS", "SSSSSSS", "SSSSSSS", "SSSSSSS"], "t_block")
 	died_flag = false
 	var b4 := _make_board()
-	_check(b4.load_level(death_level), "death level loads")
+	_check(b4.load_level(block_level), "blocking-rock level loads")
 	b4.try_move(Vector2i(1, 0))
-	_check(died_flag, "falling rock kills the player")
-	_check(b4.dead, "death marks the board dead")
-	_check(not b4.finished, "death is not a win")
+	_check(not died_flag, "a one-cell rock drop does not kill the player")
+	_check(not b4.dead, "the player survives a one-cell rock drop")
+	_check(int(b4.grid[1][2]) == LevelData.T_ROCK, "one-cell rock rests above and blocks the tunnel")
 	b4.undo()
-	_check(not b4.dead, "undo revives the player")
+	_check(not b4.dead, "undo keeps the player alive after a blocked drop")
 	b4.queue_free()
+
+	# A rock that has fallen two cells before reaching the player is lethal.
+	var death_level := _level(["SSR SSS", "SS SSSS", "SP.FESS", "SSSSSSS", "SSSSSSS", "SSSSSSS", "SSSSSSS"], "t_death")
+	died_flag = false
+	var b4b := _make_board()
+	_check(b4b.load_level(death_level), "death level loads")
+	b4b.try_move(Vector2i(1, 0))
+	_check(died_flag, "a two-cell rock drop kills the player")
+	_check(b4b.dead, "death marks the board dead")
+	_check(not b4b.finished, "death is not a win")
+	b4b.undo()
+	_check(not b4b.dead, "undo revives the player")
+	b4b.queue_free()
 
 	# --- Gravity drops a rock into an emptied cell ------------------------
 	var gravity_level := _level(["SSSSSSS", "SPR SSS", "SS  SSS", "SSSSFES", "SSSSSSS", "SSSSSSS", "SSSSSSS"])
@@ -111,6 +125,17 @@ func _run() -> void:
 	_check(int(b5.grid[2][3]) == LevelData.T_ROCK, "unsupported rock falls down")
 	_check(int(b5.grid[1][3]) == LevelData.T_EMPTY, "fallen rock leaves its old cell")
 	b5.queue_free()
+
+	# --- The beaver cannot climb into open air ----------------------------
+	var climb_level := _level(["SSSSSSS", "S SSSSS", "SPFESSS", "SSSSSSS", "SSSSSSS", "SSSSSSS", "SSSSSSS"], "t_climb")
+	message_flag = ""
+	var b6 := _make_board()
+	_check(b6.load_level(climb_level), "climb level loads")
+	var climbed := b6.try_move(Vector2i(0, -1))
+	_check(not climbed, "player cannot move up into empty air")
+	_check(b6.px == 1 and b6.py == 2, "illegal climb leaves the player in place")
+	_check(message_flag.contains("فراغ"), "illegal climb explains itself")
+	b6.queue_free()
 
 	# --- Star thresholds --------------------------------------------------
 	var par_level := {"par": 10}

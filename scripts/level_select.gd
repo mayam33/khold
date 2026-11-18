@@ -155,6 +155,7 @@ func _confirm_delete(level: Dictionary) -> void:
 	dialog.ok_button_text = "حذف"
 	dialog.theme = UITheme.shared()
 	add_child(dialog)
+	I18n.translate_tree(dialog)
 	dialog.confirmed.connect(func():
 		Store.delete_user_level(String(level.get("id", "")))
 		_refresh()

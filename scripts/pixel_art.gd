@@ -1,23 +1,7 @@
 class_name PixelArt
 extends RefCounted
 
-## Procedural pixel art. No sprite sheets are required, which keeps the game
-## tiny and makes it easy to restyle by editing these constants.
-
-const MOLE := [
-	"....mmmm....",
-	"..mmmmmmmm..",
-	"..dmmymmmd..",
-	"..dddddddd..",
-	"..dggggggd..",
-	"..dgccccgd..",
-	"..dgwccwgd..",
-	"..dddddddd..",
-	"..ddnnnndd..",
-	"...dbbbbd...",
-	"..dddddddd..",
-	"..dd.dd.dd..",
-]
+## Procedural cave tiles and pickups; the beaver uses the supplied sprite sheet.
 
 const FRUIT := [
 	"...ll...",
@@ -108,6 +92,7 @@ static func draw_rock(ci: CanvasItem, rect: Rect2) -> void:
 	ci.draw_rect(Rect2(x + 8.0 * u, y + 3.0 * u, 1.0 * u, 3.0 * u), dark)
 	ci.draw_rect(Rect2(x + 9.0 * u, y + 6.0 * u, 1.0 * u, 2.0 * u), dark)
 	ci.draw_rect(Rect2(x + 5.0 * u, y + 8.0 * u, 3.0 * u, 1.0 * u), dark)
+	ci.draw_rect(Rect2(x + 2.0 * u, y + 1.0 * u, 12.0 * u, 13.0 * u), Color("2b1b14"), false, maxf(1.0, u))
 
 static func draw_steel(ci: CanvasItem, rect: Rect2) -> void:
 	var x := rect.position.x
@@ -158,23 +143,6 @@ static func draw_exit(ci: CanvasItem, rect: Rect2, open: bool, time: float, cell
 		ci.draw_rect(Rect2(x + 6.0 * u, y + 6.0 * u, u, u), Color("d8b25a"))
 		ci.draw_rect(Rect2(x + 9.0 * u, y + 6.0 * u, u, u), Color("d8b25a"))
 		ci.draw_rect(Rect2(x + 6.0 * u, y + 5.0 * u, 4.0 * u, u), Color("d8b25a"))
-
-static func draw_mole(ci: CanvasItem, rect: Rect2, time: float, flip := false) -> void:
-	var side := minf(rect.size.x, rect.size.y) * 0.88
-	var bob := sin(time * 3.4) * side * 0.025
-	var inner := Rect2(rect.get_center() - Vector2(side, side) * 0.5 + Vector2(0.0, bob), Vector2(side, side))
-	var shadow_w := side * 0.62
-	ci.draw_rect(Rect2(inner.get_center().x - shadow_w * 0.5, rect.position.y + rect.size.y * 0.86, shadow_w, side * 0.07), Color(0.0, 0.0, 0.0, 0.25))
-	draw_pattern(ci, MOLE, {
-		"d": Color("7a4f3a"),
-		"m": Color("f2b544"),
-		"y": Color("fff1a8"),
-		"g": Color("22323a"),
-		"c": Color("7fe3ff"),
-		"w": Color("ffffff"),
-		"n": Color("ff9eb5"),
-		"b": Color("d9a273"),
-	}, inner, flip)
 
 static func draw_pattern(ci: CanvasItem, pattern: Array, palette: Dictionary, rect: Rect2, flip := false) -> void:
 	if pattern.is_empty():

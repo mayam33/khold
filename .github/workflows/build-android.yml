@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  APK_NAME: khold.apk
+  APK_NAME: BeaverExplorer.apk
   # ubuntu-latest ships the Android SDK here. Godot reads these variables on
   # its first editor launch to auto-configure export/android/*_sdk_path.
   ANDROID_HOME: /usr/local/lib/android/sdk
@@ -89,7 +89,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: khold-apk
+          name: beaver-explorer-apk
           path: build/*.apk
           if-no-files-found: error
           retention-days: 30

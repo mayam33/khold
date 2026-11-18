@@ -135,7 +135,7 @@ func _request(method: String, path: String, body: Variant = null) -> Dictionary:
 func _set_status(text: String, error := false) -> void:
 	if _status == null:
 		return
-	_status.text = text
+	I18n.set_node_text(_status, &"text", text)
 	_status.add_theme_color_override("font_color", UITheme.RED if error else UITheme.MUTED)
 
 func _rebuild() -> void:
@@ -342,6 +342,7 @@ func _confirm_report(level: Dictionary) -> void:
 	dialog.ok_button_text = "إبلاغ"
 	dialog.theme = UITheme.shared()
 	add_child(dialog)
+	I18n.translate_tree(dialog)
 	dialog.confirmed.connect(func(): _report(String(level.get("id", ""))))
 	dialog.canceled.connect(dialog.queue_free)
 	dialog.popup_centered(Vector2i(540, 250))
@@ -365,6 +366,7 @@ func _confirm_delete_download(level: Dictionary) -> void:
 	dialog.ok_button_text = "حذف"
 	dialog.theme = UITheme.shared()
 	add_child(dialog)
+	I18n.translate_tree(dialog)
 	dialog.confirmed.connect(func():
 		Store.delete_download(String(level.get("id", "")))
 		_rebuild()

@@ -1,26 +1,25 @@
 class_name UITheme
 extends RefCounted
 
-## Central visual identity for Khold. Everything is drawn or styled in code,
-## so the project ships with no third-party art assets.
+## Central visual identity for Beaver Explorer, using warm cave colors from the beaver art.
 
 const FONT_REGULAR: FontFile = preload("res://assets/fonts/Almarai-Regular.ttf")
 const FONT_BOLD: FontFile = preload("res://assets/fonts/Almarai-Bold.ttf")
 
-const BG := Color("120e16")
-const BG_2 := Color("1c1521")
-const PANEL := Color("241b2c")
-const PANEL_2 := Color("2d2236")
-const PANEL_3 := Color("372a42")
-const TEXT := Color("f4ecdf")
-const MUTED := Color("b8aabf")
-const ACCENT := Color("f2b544")
-const ACCENT_DARK := Color("c98f22")
-const ACCENT_INK := Color("2a1b05")
-const GREEN := Color("7bd88f")
-const RED := Color("ef6a5b")
-const BLUE := Color("7fe3ff")
-const BORDER := Color("42344e")
+const BG := Color("17100d")
+const BG_2 := Color("241713")
+const PANEL := Color("2e201a")
+const PANEL_2 := Color("3b281f")
+const PANEL_3 := Color("4a3226")
+const TEXT := Color("f5eadc")
+const MUTED := Color("c4aa95")
+const ACCENT := Color("f0a15c")
+const ACCENT_DARK := Color("bb682f")
+const ACCENT_INK := Color("2b160b")
+const GREEN := Color("8bc77a")
+const RED := Color("e46b52")
+const BLUE := Color("8bb9c9")
+const BORDER := Color("563d30")
 
 static var _theme: Theme
 

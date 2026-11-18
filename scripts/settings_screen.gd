@@ -33,6 +33,9 @@ func _ready() -> void:
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(v)
 
+	v.add_child(_language_card())
+	v.add_child(_toggle_card("إظهار أسهم التحكم", "يمكنك إخفاؤها واستخدام السحب أو لوحة المفاتيح.", bool(Store.settings.get("show_arrows", true)), _on_show_arrows))
+	v.add_child(_display_scale_card())
 	v.add_child(_toggle_card("المؤثرات الصوتية", "نغمات الحفر والجمع والنجاح", bool(Store.settings.get("sound", true)), _on_sound))
 	v.add_child(_toggle_card("الاهتزاز", "لمسات خفيفة على الجوال", bool(Store.settings.get("haptics", true)), _on_haptics))
 
@@ -95,8 +98,8 @@ func _ready() -> void:
 	var av := UI.vbox(8)
 	about.add_child(av)
 	av.add_child(UI.heading("عن اللعبة", 24))
-	av.add_child(UI.wrap_label("خُلد لعبة حفر بكسل أصلية، مفتوحة المصدر برخصة MIT. كل الرسومات والأصوات تُرسم وتُولّد بالكود داخل المشروع، ولا تحتوي اللعبة على أصول فنية منسوخة من أي لعبة أخرى.", 20, UITheme.MUTED))
-	av.add_child(UI.wrap_label("صُنعت بـ Godot 4. الخط: Almarai برخصة SIL Open Font License. أسلوب اللعب مستلهم من ألعاب الحفر الكلاسيكية مع تصميم ومحتوى أصليين.", 19, UITheme.MUTED))
+	av.add_child(UI.wrap_label("Beaver Explorer مغامرة قندس استكشف فيها الأنفاق تحت الأرض. رسوم الشخصية مبنية على ورقة الرسوم التي زودنا بها اللاعب.", 20, UITheme.MUTED))
+	av.add_child(UI.wrap_label("صُنعت بـ Godot 4. أسلوب اللعب يستلهم ألعاب الحفر الكلاسيكية مع مراحل ومحتوى أصليين.", 19, UITheme.MUTED))
 	var links := UI.hbox(14)
 	links.add_child(_link("ترخيص Godot", "https://godotengine.org/license/"))
 	links.add_child(_link("رخصة الخط", "https://scripts.sil.org/OFL"))
@@ -107,7 +110,7 @@ func _ready() -> void:
 	reset.add_theme_color_override("font_color", UITheme.RED)
 	reset.pressed.connect(_confirm_reset)
 	v.add_child(reset)
-	v.add_child(UI.label("الإصدار 1.0.0", 18, Color("7c6f84"), HORIZONTAL_ALIGNMENT_CENTER))
+	v.add_child(UI.label("الإصدار 1.1.0", 18, Color("7c6f84"), HORIZONTAL_ALIGNMENT_CENTER))
 	v.add_child(UI.spacer_h(20))
 
 func _toggle_card(title: String, subtitle: String, value: bool, handler: Callable) -> Control:
@@ -126,6 +129,60 @@ func _toggle_card(title: String, subtitle: String, value: bool, handler: Callabl
 	check.toggled.connect(handler)
 	row.add_child(check)
 	return card
+
+func _language_card() -> Control:
+	var card := UI.card()
+	var row := UI.hbox(12)
+	card.add_child(row)
+	var title := UI.heading("اللغة", 23)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(title)
+	var choice := OptionButton.new()
+	choice.custom_minimum_size = Vector2(160, 48)
+	choice.focus_mode = Control.FOCUS_NONE
+	choice.add_item("English", 0)
+	choice.add_item("العربية", 1)
+	choice.select(0 if I18n.language == "en" else 1)
+	choice.item_selected.connect(_on_language_selected)
+	row.add_child(choice)
+	return card
+
+func _display_scale_card() -> Control:
+	var card := UI.card()
+	var col := UI.vbox(8)
+	card.add_child(col)
+	var row := UI.hbox(8)
+	var label := UI.heading("حجم العرض", 23)
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	var value_label := UI.label("%d%%" % roundi(float(Store.settings.get("display_scale", 1.0)) * 100.0), 20, UITheme.ACCENT)
+	value_label.name = "DisplayScaleValue"
+	value_label.custom_minimum_size.x = 68
+	row.add_child(value_label)
+	col.add_child(row)
+	col.add_child(UI.label("كبّر أو صغّر واجهة اللعبة.", 18, UITheme.MUTED))
+	var slider := HSlider.new()
+	slider.min_value = 0.8
+	slider.max_value = 1.2
+	slider.step = 0.1
+	slider.value = float(Store.settings.get("display_scale", 1.0))
+	slider.custom_minimum_size.y = 32
+	slider.value_changed.connect(_on_display_scale_changed.bind(value_label))
+	col.add_child(slider)
+	return card
+
+func _on_language_selected(index: int) -> void:
+	I18n.set_language("en" if index == 0 else "ar")
+
+func _on_show_arrows(enabled: bool) -> void:
+	Store.set_setting("show_arrows", enabled)
+
+func _on_display_scale_changed(value: float, value_label: Label) -> void:
+	Store.set_setting("display_scale", value)
+	value_label.text = "%d%%" % roundi(value * 100.0)
+	var main := get_tree().current_scene
+	if main and main.has_method("apply_display_scale"):
+		main.call("apply_display_scale")
 
 func _link(text: String, uri: String) -> LinkButton:
 	var b := LinkButton.new()
@@ -154,6 +211,7 @@ func _confirm_reset() -> void:
 	dialog.ok_button_text = "امسح"
 	dialog.theme = UITheme.shared()
 	add_child(dialog)
+	I18n.translate_tree(dialog)
 	dialog.confirmed.connect(func():
 		Store.reset_progress()
 		_toast("تم مسح التقدم.")

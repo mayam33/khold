@@ -7,6 +7,7 @@ extends Node
 var failures: Array = []
 var checks := 0
 var _old_server := ""
+var _old_language := "en"
 
 func _ready() -> void:
 	await get_tree().process_frame
@@ -41,6 +42,9 @@ func _run() -> void:
 	# The UI suite must publish to the throwaway local server, never the cloud.
 	_old_server = String(Store.settings.get("server_url", ""))
 	Store.set_setting("server_url", "http://127.0.0.1:8787")
+	# Assertions in this suite use Arabic source strings, so force Arabic.
+	_old_language = String(Store.settings.get("language", "en"))
+	I18n.set_language("ar")
 
 	var packed: PackedScene = load("res://scenes/main.tscn")
 	_check(packed != null, "main scene loads")
@@ -195,6 +199,7 @@ func _run() -> void:
 	if saved_id != "":
 		Store.delete_user_level(saved_id)
 	Store.set_setting("server_url", _old_server)
+	I18n.set_language(_old_language)
 	Sfx.stop_all()
 	print("")
 	print("UI smoke test: %d checks, %d failures" % [checks, failures.size()])

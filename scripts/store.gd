@@ -9,6 +9,9 @@ const LEVELS_DIR := "user://levels"
 const DOWNLOADS_DIR := "user://downloads"
 
 const DEFAULT_SETTINGS := {
+	"language": "en",
+	"show_arrows": true,
+	"display_scale": 1.0,
 	"sound": true,
 	"haptics": true,
 	"author": "لاعب",

@@ -21,14 +21,29 @@ var _toast_tween: Tween
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	layout_direction = Control.LAYOUT_DIRECTION_RTL
+	layout_direction = Control.LAYOUT_DIRECTION_LTR if I18n.language == "en" else Control.LAYOUT_DIRECTION_RTL
 	theme = UITheme.shared()
-	TranslationServer.set_locale("ar")
-	get_window().title = "خُلد — مغامرة الحفر"
-	get_window().min_size = Vector2i(360, 640)
+	get_window().title = "Beaver Explorer — Underground Adventure"
+	get_window().min_size = Vector2i(320, 560)
+	apply_display_scale()
+	I18n.language_changed.connect(_on_language_changed)
 	_add_background()
 	_add_toast()
+	I18n.translate_tree(self)
 	show_menu()
+
+func apply_display_scale() -> void:
+	var factor := clampf(float(Store.settings.get("display_scale", 1.0)), 0.8, 1.2)
+	var window := get_window()
+	if OS.has_feature("mobile"):
+		window.content_scale_factor = factor
+	else:
+		window.size = Vector2i(roundi(405.0 * factor), roundi(720.0 * factor))
+
+func _on_language_changed(language: String) -> void:
+	layout_direction = Control.LAYOUT_DIRECTION_LTR if language == "en" else Control.LAYOUT_DIRECTION_RTL
+	get_window().title = "Beaver Explorer — Underground Adventure"
+	I18n.translate_tree(self)
 
 func _add_background() -> void:
 	var bg := preload("res://scripts/background.gd").new()
@@ -71,7 +86,7 @@ func toast(text: String, duration := 2.6) -> void:
 		return
 	if _toast_tween and _toast_tween.is_valid():
 		_toast_tween.kill()
-	_toast_label.text = text
+	I18n.set_node_text(_toast_label, &"text", text)
 	_toast_panel.visible = true
 	_toast_panel.modulate.a = 0.0
 	_toast_tween = create_tween()
@@ -89,6 +104,7 @@ func _swap(screen: Control) -> void:
 	current = screen
 	add_child(screen)
 	screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	I18n.translate_tree(screen)
 
 func show_menu() -> void:
 	var s := MenuScreenScript.new()
@@ -185,6 +201,7 @@ func _on_test_requested(level: Dictionary) -> void:
 		current.visible = false
 	add_child(g)
 	g.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	I18n.translate_tree(g)
 	_test_overlay = g
 
 func _close_test() -> void:

@@ -56,6 +56,8 @@ jobs:
         run: godot --headless --path . --script res://tools/solve.gd
       - name: Mechanics tests
         run: godot --headless --path . res://tools/test_mechanics.tscn
+      - name: Localization and beaver art tests
+        run: godot --headless --path . res://tools/test_localization.tscn
       - name: Cloud server connectivity
         run: godot --headless --path . res://tools/test_cloud.tscn
       - name: Start level server

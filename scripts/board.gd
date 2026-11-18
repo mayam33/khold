@@ -43,6 +43,9 @@ var _particles: Array = []
 var _undo_stack: Array = []
 var _shake := 0.0
 var _exit_warn := 0.0
+var beaver_animation := "idle"
+var _animation_clock := 0.0
+var _animation_duration := 0.0
 var _ptween: Tween
 var _touch_start := Vector2.ZERO
 var _touch_index := -1
@@ -51,6 +54,7 @@ var _tracking := false
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	focus_mode = Control.FOCUS_NONE
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	resized.connect(_layout)
 	_layout()
@@ -81,6 +85,7 @@ func load_level(data: Dictionary) -> bool:
 	_particles.clear()
 	_shake = 0.0
 	_exit_warn = 0.0
+	_set_animation("idle")
 	if _ptween and _ptween.is_valid():
 		_ptween.kill()
 	player_vis = Vector2(px, py)
@@ -121,6 +126,10 @@ func try_move(dir: Vector2i) -> bool:
 		return false
 
 	var tile := int(grid[ty][tx])
+	if dir.y < 0 and tile == LevelData.T_EMPTY:
+		_bump()
+		message_requested.emit("لا يستطيع القندس الصعود إلى فراغ.")
+		return false
 	var snap := _snapshot()
 
 	match tile:
@@ -138,12 +147,14 @@ func try_move(dir: Vector2i) -> bool:
 			grid[ty][bx] = LevelData.T_ROCK
 			grid[ty][tx] = LevelData.T_EMPTY
 			_make_move(tx, ty, snap, 0.16)
+			_set_animation("walk", 0.28)
 			Sfx.play("push", randf_range(0.95, 1.05))
 			Sfx.haptic(8)
 			_spawn_burst(tx, ty, Color("7b8791"), 5, 0.8)
 		LevelData.T_DIRT:
 			grid[ty][tx] = LevelData.T_EMPTY
 			_make_move(tx, ty, snap, 0.15)
+			_set_animation("dig", 0.38)
 			Sfx.play("dig", randf_range(0.9, 1.12))
 			Sfx.haptic(6)
 			_spawn_burst(tx, ty, Color("8a6039"), 7, 1.0)
@@ -151,6 +162,7 @@ func try_move(dir: Vector2i) -> bool:
 			grid[ty][tx] = LevelData.T_EMPTY
 			fruits_left = maxi(0, fruits_left - 1)
 			_make_move(tx, ty, snap, 0.16)
+			_set_animation("walk", 0.28)
 			Sfx.play("collect", randf_range(0.96, 1.06))
 			Sfx.haptic(10)
 			_spawn_burst(tx, ty, Color("e8524a"), 10, 1.2)
@@ -170,6 +182,7 @@ func try_move(dir: Vector2i) -> bool:
 			if dead:
 				return false
 			finished = true
+			_set_animation("celebrate")
 			facing = Vector2i(0, 1)
 			Sfx.play("win")
 			Sfx.haptic(35)
@@ -178,6 +191,7 @@ func try_move(dir: Vector2i) -> bool:
 			return true
 		_:
 			_make_move(tx, ty, snap, 0.13)
+			_set_animation("fall" if dir.y > 0 else "walk", 0.32)
 			Sfx.play("step", randf_range(0.94, 1.06))
 	return true
 
@@ -193,6 +207,7 @@ func undo() -> bool:
 	dead = false
 	finished = false
 	cooldown = 0.1
+	_set_animation("idle")
 	if _ptween and _ptween.is_valid():
 		_ptween.kill()
 	player_vis = Vector2(px, py)
@@ -214,6 +229,7 @@ func _make_move(tx: int, ty: int, snap: Dictionary, cd: float) -> void:
 	stats_changed.emit(stats())
 
 func _bump() -> void:
+	_set_animation("hurt", 0.24)
 	cooldown = 0.1
 	_shake = maxf(_shake, 0.18)
 	Sfx.play("bump", randf_range(0.95, 1.08))
@@ -229,6 +245,12 @@ func _unlock_exit() -> void:
 
 func _resolve_gravity() -> void:
 	var moved_any := false
+	var fall_distance: Array = []
+	for y in range(h):
+		var row: Array = []
+		for x in range(w):
+			row.append(0)
+		fall_distance.append(row)
 	var guard := 0
 	while guard < h + 3:
 		var changed := false
@@ -239,19 +261,26 @@ func _resolve_gravity() -> void:
 				var ny := y + 1
 				if ny >= h:
 					continue
+				if x == px and ny == py:
+					var impact_distance := int(fall_distance[y][x]) + 1
+					if impact_distance >= 2:
+						dead = true
+						_set_animation("die")
+						_shake = 1.0
+						Sfx.play("die")
+						Sfx.haptic(140)
+						stats_changed.emit(stats())
+						died.emit()
+						return
+					# A one-cell drop stops above the beaver and blocks the tunnel.
+					continue
 				if int(grid[ny][x]) != LevelData.T_EMPTY:
 					continue
 				grid[y][x] = LevelData.T_EMPTY
 				grid[ny][x] = LevelData.T_ROCK
+				fall_distance[ny][x] = int(fall_distance[y][x]) + 1
+				fall_distance[y][x] = 0
 				_spawn_burst(x, ny, Color("8b98a2"), 3, 0.7)
-				if x == px and ny == py:
-					dead = true
-					_shake = 1.0
-					Sfx.play("die")
-					Sfx.haptic(140)
-					stats_changed.emit(stats())
-					died.emit()
-					return
 				changed = true
 				moved_any = true
 		if not changed:
@@ -285,6 +314,11 @@ func _spawn_burst(cx: int, cy: int, color: Color, amount: int, power: float) -> 
 
 func _process(delta: float) -> void:
 	time += delta
+	_animation_clock += delta
+	if _animation_duration > 0.0:
+		_animation_duration = maxf(0.0, _animation_duration - delta)
+		if _animation_duration == 0.0 and not dead and not finished:
+			_set_animation("idle")
 	cooldown = maxf(0.0, cooldown - delta)
 	_shake = maxf(0.0, _shake - delta * 2.6)
 	_exit_warn = maxf(0.0, _exit_warn - delta * 2.0)
@@ -332,9 +366,7 @@ func _draw() -> void:
 			var rect := Rect2(float(x) * _cell, float(y) * _cell, _cell, _cell)
 			PixelArt.draw_tile(self, int(grid[y][x]), rect, Vector2i(x, y), time, open)
 
-	# Mole
-	var prect := Rect2((player_vis.x + 0.5) * _cell - _cell * 0.5, (player_vis.y + 0.5) * _cell - _cell * 0.5, _cell, _cell)
-	PixelArt.draw_mole(self, prect, time, facing.x < 0)
+	_draw_beaver(jitter)
 
 	for p in _particles:
 		var a: float = clampf(float(p["life"]) / float(p["max"]), 0.0, 1.0)
@@ -347,6 +379,34 @@ func _draw() -> void:
 		draw_circle(ec, _cell * 0.44, Color(0.95, 0.35, 0.3, 0.18 * _exit_warn))
 
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+func _draw_beaver(jitter: Vector2) -> void:
+	var frames := BeaverArt.frames_for(beaver_animation)
+	var rate := 3.2 if beaver_animation == "idle" else 8.0
+	var frame_index := floori(_animation_clock * rate)
+	if beaver_animation == "die":
+		frame_index = mini(frame_index, frames.size() - 1)
+	var texture := BeaverArt.texture_for(beaver_animation, frame_index)
+	var target_size := Vector2(_cell * 1.18, _cell * 1.48)
+	var target := Rect2(
+		(player_vis.x + 0.5) * _cell - target_size.x * 0.5,
+		(player_vis.y + 1.0) * _cell - target_size.y * 0.92,
+		target_size.x,
+		target_size.y
+	)
+	if facing.x < 0:
+		draw_set_transform(_origin + jitter + Vector2(target.end.x, target.position.y), 0.0, Vector2(-1.0, 1.0))
+		draw_texture_rect(texture, Rect2(Vector2.ZERO, target.size), false)
+		draw_set_transform(_origin + jitter, 0.0, Vector2.ONE)
+	else:
+		draw_texture_rect(texture, target, false)
+
+func _set_animation(animation: String, duration := 0.0) -> void:
+	if dead and animation != "die":
+		return
+	beaver_animation = animation
+	_animation_clock = 0.0
+	_animation_duration = duration
 
 # ---------------------------------------------------------------- input
 
